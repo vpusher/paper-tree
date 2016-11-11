@@ -1,0 +1,123 @@
+<!doctype html>
+
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+
+    <!-- Step 1: import the element to test -->
+    <link rel="import" href="../paper-tree.html">
+      <link rel="import" href="../paper-tree-node.html">
+  </head>
+  <body>
+
+    <!-- You can use the document as a place to set up your fixtures. -->
+    <paper-tree-node></paper-tree-node>
+    <paper-tree></paper-tree>
+
+    <script>
+      var node = document.querySelector('paper-tree-node');
+      var tree = document.querySelector('paper-tree');
+
+      suite('<paper-tree>', function() {
+
+        test('defines the "data" property', function() {
+          assert.deepEqual(tree.data, {});
+        });
+
+        test('defines the "selected" property', function() {
+          assert.equal(tree.selected, null);
+        });
+        
+        test('_dataChanged', function() {
+          tree.data = { name: 'Documents' };
+          tree._dataChanged();
+          assert.equal(tree.$.root.data, tree.data);
+        });
+
+        test('_selectNode', function() {
+          var found = false;
+          tree._selectNode({ target: document.body });
+          for(var i=0; i<node.classList.length; i++){
+            if(node.classList[i] === 'selected') {
+              found = true;
+              break;
+            }
+          }
+          assert.equal(found, false);
+          assert.equal(document.body.className, 'selected');
+          tree._selectNode({ target: node });
+          assert.equal(document.body.className, '');
+          for(var i=0; i<node.classList.length; i++){
+            if(node.classList[i] === 'selected') {
+              found = true;
+              break;
+            }
+          }
+          assert.equal(found, true);
+        });
+
+      });
+      
+      suite('<paper-tree-node>', function() {
+
+        test('defines the "data" property', function() {
+          assert.deepEqual(node.data, {});
+        });
+
+        test('_computeClass', function() {
+          var answer = node._determineClass(true, []);
+          assert.equal(answer, 'parent ');
+          
+          answer = node._determineClass(false, []);
+          assert.equal(answer, 'parent ');
+          
+          answer = node._determineClass(false, [1]);
+          assert.equal(answer, 'parent collapsed');
+          
+          answer = node._determineClass(true, [1]);
+          assert.equal(answer, 'parent expanded');
+        });
+        
+        test('_computeIcon', function() {
+          var answer = node._determineIcon('');
+          assert.equal(answer, 'folder');
+          
+          answer = node._determineIcon('folder');
+          assert.equal(answer, 'folder');
+        });
+
+        test('select Node', function(done) {
+          tree.addEventListener('select', function(event) {
+            assert.equal(event.detail, tree.$.root);
+            done();
+          });
+          tree.$.root.selectNode();
+        });
+        
+         test('toggle children', function() {
+          node['data']['children'] = [];
+          node['data']['open'] = false;
+          node.toggleChildren();
+          assert.equal(node.data.open, false);
+          
+          node.data.open = true;
+          node.toggleChildren();
+          assert.equal(node.data.open, false);
+          
+          node.data.children = [1];
+          node.toggleChildren();
+          assert.equal(node.data.open, true);
+          
+          node.toggleChildren();
+          assert.equal(node.data.open, false);
+        });
+
+      });
+    </script>
+
+  </body>
+</html>

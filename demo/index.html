@@ -1,0 +1,134 @@
+<!doctype html>
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+    <title>paper-tree Demo</title>
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../paper-tree.html">
+
+    <style is="custom-style" include="demo-pages-shared-styles"></style>
+</head>
+<body>
+
+<div class="vertical-section-container centered">
+
+    <h3>Basic demo with only one node</h3>
+    <demo-snippet>
+        <template>
+            <paper-tree id="tree1"></paper-tree>
+            <script>
+
+                var tree = document.querySelector('#tree1');
+
+                // Only one node.
+                tree.data = {
+                    "name": "Hello"
+                };
+
+            </script>
+        </template>
+    </demo-snippet>
+
+    <h3>Basic demo with one root node and some children</h3>
+    <demo-snippet>
+        <template>
+            <paper-tree id="tree2"></paper-tree>
+            <script>
+
+                var tree = document.querySelector('#tree2');
+
+                // Some children.
+                tree.data = {
+                    "name": "Hello",
+                    "children": [{
+                        "name": "World"
+                    }, {
+                        "name": "There"
+                    }, {
+                        "name": "You"
+                    }]
+                };
+            </script>
+        </template>
+    </demo-snippet>
+
+
+    <h3>Complex tree demo</h3>
+    <demo-snippet>
+        <template>
+            <paper-tree id="tree3"></paper-tree>
+            <script>
+
+                var tree = document.querySelector('#tree3');
+
+                // Setting some data.
+                tree.data = {
+                    "name": "Root",
+                    "open": true,
+                    "children": [
+                        {
+                            "name": "Child A",
+                            "children": [{
+                                "name": "Grandchild A"
+                            }]
+                        },
+                        {
+                            "name": "Child B",
+                            "open": true,
+                            "children": [{
+                                "name": "Grandchild B",
+                                "open": true,
+                                "children": [{
+                                    "name": "Great Grandchild B"
+                                }]
+                            }]
+                        },
+                        {
+                            "name": "Child C",
+                            "children": [{
+                                "name": "Grandchild C"
+                            }]
+                        },
+                        {
+                            "name": "Child D",
+                            "open": true,
+                            "children": [{
+                                "name": "Grandchild D"
+                            }]
+                        },
+                        {
+                            "name": "Child E"
+                        }
+                    ]
+                };
+
+                // Adding 2 actions.
+                tree.actions = [{
+                    label: 'Action 1',
+                    event: 'action1'
+                }, {
+                    label: 'Action 2',
+                    event: 'action2'
+                }];
+
+                // Finally adding some listeners for those actions.
+                tree.addEventListener('action1', function(event) {
+                    alert('action1 clicked for ' + event.detail.data.name);
+                });
+
+                tree.addEventListener('action2', function(event) {
+                    alert('action2 clicked for ' + event.detail.data.name);
+                });
+
+            </script>
+        </template>
+    </demo-snippet>
+
+</div>
+</body>
+</html>
