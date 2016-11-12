@@ -68,61 +68,101 @@
 
                 // Setting some data.
                 tree.data = {
-                    "name": "Root",
+                    "name": "GOT",
+                    "icon": "theaters",
                     "open": true,
                     "children": [
                         {
-                            "name": "Child A",
+                            "name": "Starks",
+                            "icon": "turned-in",
                             "children": [{
-                                "name": "Grandchild A"
+                                "icon": "account-circle",
+                                "name": "Eddard"
+                            }, {
+                                "name": "Catelyn",
+                                "icon": "account-circle"
+                            }, {
+                                "name": "Sansa",
+                                "icon": "account-circle"
+                            }, {
+                                "name": "Robb",
+                                "icon": "account-circle"
+                            }, {
+                                "name": "Bran",
+                                "icon": "account-circle"
+                            }, {
+                                "name": "Arya",
+                                "icon": "account-circle"
+                            }, {
+                                "name": "Rickson",
+                                "icon": "account-circle"
                             }]
                         },
                         {
-                            "name": "Child B",
+                            "name": "Lannisters",
+                            "open": true,
+                            "icon": "turned-in",
+                            "children": [{
+                                "name": "Tywin",
+                                "icon": "account-circle"
+                            }, {
+                                "name": "Tyrion",
+                                "icon": "account-circle"
+                            }, {
+                                "name": "Jaime",
+                                "icon": "account-circle"
+                            }, {
+                                "name": "Cersei",
+                                "icon": "account-circle"
+                            }, {
+                                "name": "Tommen",
+                                "icon": "account-circle"
+                            }, {
+                                "name": "Myrcella",
+                                "icon": "account-circle"
+                            }, {
+                                "name": "Joffrey",
+                                "icon": "account-circle"
+                            }   ]
+                        },
+                        {
+                            "name": "Targaryens",
+                            "icon": "turned-in",
+                            "children": [{
+                                "name": "Daenerys",
+                                "icon": "account-circle"
+                            }, {
+                                "name": "Viserys",
+                                "icon": "account-circle"
+                            }]
+                        },
+                        {
+                            "name": "Baratheons",
+                            "icon": "turned-in",
                             "open": true,
                             "children": [{
-                                "name": "Grandchild B",
-                                "open": true,
-                                "children": [{
-                                    "name": "Great Grandchild B"
-                                }]
+                                "name": "Robert",
+                                "icon": "account-circle"
+                            }, {
+                                "name": "Stannis",
+                                "icon": "account-circle"
+                            }, {
+                                "name": "Renly",
+                                "icon": "account-circle"
                             }]
-                        },
-                        {
-                            "name": "Child C",
-                            "children": [{
-                                "name": "Grandchild C"
-                            }]
-                        },
-                        {
-                            "name": "Child D",
-                            "open": true,
-                            "children": [{
-                                "name": "Grandchild D"
-                            }]
-                        },
-                        {
-                            "name": "Child E"
                         }
                     ]
                 };
 
-                // Adding 2 actions.
+                // Adding one action.
                 tree.actions = [{
-                    label: 'Action 1',
-                    event: 'action1'
-                }, {
-                    label: 'Action 2',
-                    event: 'action2'
+                    label: 'show',
+                    event: 'onshow'
                 }];
 
-                // Finally adding some listeners for those actions.
-                tree.addEventListener('action1', function(event) {
-                    alert('action1 clicked for ' + event.detail.data.name);
-                });
-
-                tree.addEventListener('action2', function(event) {
-                    alert('action2 clicked for ' + event.detail.data.name);
+                // Finally adding a listener for that action.
+                tree.addEventListener('onshow', function(event) {
+                    alert('This is ' + event.detail.data.name);
                 });
 
             </script>
