@@ -1,4 +1,6 @@
-# paper-tree
+# \<paper-tree\>
+
+[![Published on webcomponents.org](https://img.shields.io/badge/webcomponents.org-published-blue.svg?style=flat-square)](https://beta.webcomponents.org/element/vpusher/paper-tree)
 
 Display a browsable tree of nodes (`<paper-tree-node>`) with expandable/collapsible capabilities and actions menu for each node.
 
