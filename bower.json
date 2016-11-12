@@ -1,6 +1,7 @@
 {
   "name": "paper-tree",
   "main": "paper-tree.html",
+  "version": "1.0.0",
   "description": "A custom element displaying a tree structure.",
   "homepage": "https://github.com/vpusher/paper-tree",
   "authors": [
