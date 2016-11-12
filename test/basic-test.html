@@ -1,7 +1,7 @@
 <!doctype html>
 
 <html>
-  <head>
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
 
@@ -10,114 +10,131 @@
 
     <!-- Step 1: import the element to test -->
     <link rel="import" href="../paper-tree.html">
-      <link rel="import" href="../paper-tree-node.html">
-  </head>
-  <body>
+    <link rel="import" href="../paper-tree-node.html">
+</head>
+<body>
 
-    <!-- You can use the document as a place to set up your fixtures. -->
-    <paper-tree-node></paper-tree-node>
-    <paper-tree></paper-tree>
+<!-- You can use the document as a place to set up your fixtures. -->
+<paper-tree-node></paper-tree-node>
+<paper-tree></paper-tree>
 
-    <script>
-      var node = document.querySelector('paper-tree-node');
-      var tree = document.querySelector('paper-tree');
+<script>
+    var node = document.querySelector('paper-tree-node');
+    var tree = document.querySelector('paper-tree');
 
-      suite('<paper-tree>', function() {
+    suite('<paper-tree>', function() {
 
-        test('defines the "data" property', function() {
-          assert.deepEqual(tree.data, {});
+        test('defines the default "data" property', function() {
+            assert.equal(tree.data, null);
         });
 
-        test('defines the "selected" property', function() {
-          assert.equal(tree.selected, null);
+        test('defines the default "selected" property', function() {
+            assert.equal(tree.selected, null);
         });
-        
+
         test('_dataChanged', function() {
-          tree.data = { name: 'Documents' };
-          tree._dataChanged();
-          assert.equal(tree.$.root.data, tree.data);
+            tree.data = { name: 'root' };
+            tree._dataChanged();
+            assert.equal(tree.$.root.data, tree.data);
         });
 
         test('_selectNode', function() {
-          var found = false;
-          tree._selectNode({ target: document.body });
-          for(var i=0; i<node.classList.length; i++){
-            if(node.classList[i] === 'selected') {
-              found = true;
-              break;
+            var found = false;
+            tree._selectNode({ target: document.body });
+            for(var i=0; i<node.classList.length; i++){
+                if(node.classList[i] === 'selected') {
+                    found = true;
+                    break;
+                }
             }
-          }
-          assert.equal(found, false);
-          assert.equal(document.body.className, 'selected');
-          tree._selectNode({ target: node });
-          assert.equal(document.body.className, '');
-          for(var i=0; i<node.classList.length; i++){
-            if(node.classList[i] === 'selected') {
-              found = true;
-              break;
+            assert.equal(found, false);
+            assert.equal(document.body.className, 'selected');
+            tree._selectNode({ target: node });
+            assert.equal(document.body.className, '');
+            for(var i=0; i<node.classList.length; i++){
+                if(node.classList[i] === 'selected') {
+                    found = true;
+                    break;
+                }
             }
-          }
-          assert.equal(found, true);
+            assert.equal(found, true);
         });
 
-      });
-      
-      suite('<paper-tree-node>', function() {
+    });
 
-        test('defines the "data" property', function() {
-          assert.deepEqual(node.data, {});
+    suite('<paper-tree-node>', function() {
+
+        test('defines the default "data" property', function() {
+            assert.equal(node.data, null);
         });
 
         test('_computeClass', function() {
-          var answer = node._determineClass(true, []);
-          assert.equal(answer, 'parent ');
-          
-          answer = node._determineClass(false, []);
-          assert.equal(answer, 'parent ');
-          
-          answer = node._determineClass(false, [1]);
-          assert.equal(answer, 'parent collapsed');
-          
-          answer = node._determineClass(true, [1]);
-          assert.equal(answer, 'parent expanded');
+            // Some defaults tests
+            var answer = node._computeClass();
+            assert.equal(answer, 'parent ');
+
+            answer = node._computeClass({});
+            assert.equal(answer, 'parent ');
+
+            // Ask for expanded with no children
+            answer = node._computeClass({base: {open: true}});
+            assert.equal(answer, 'parent ');
+
+            // Ask for expanded with empty children
+            answer = node._computeClass({base: {open: true, children:[]}});
+            assert.equal(answer, 'parent ');
+
+            // Ask for collapsed with children
+            answer = node._computeClass({base: {open: false, children:[0]}});
+            assert.equal(answer, 'parent collapsed');
+
+            // Ask for expanded with children
+            answer = node._computeClass({base: {open: true, children:[0]}});
+            assert.equal(answer, 'parent expanded');
         });
-        
+
         test('_computeIcon', function() {
-          var answer = node._determineIcon('');
-          assert.equal(answer, 'folder');
-          
-          answer = node._determineIcon('folder');
-          assert.equal(answer, 'folder');
+            var answer = node._computeIcon('');
+            assert.equal(answer, 'folder');
+
+            answer = node._computeIcon('folder');
+            assert.equal(answer, 'folder');
         });
 
-        test('select Node', function(done) {
-          tree.addEventListener('select', function(event) {
-            assert.equal(event.detail, tree.$.root);
-            done();
-          });
-          tree.$.root.selectNode();
-        });
-        
-         test('toggle children', function() {
-          node['data']['children'] = [];
-          node['data']['open'] = false;
-          node.toggleChildren();
-          assert.equal(node.data.open, false);
-          
-          node.data.open = true;
-          node.toggleChildren();
-          assert.equal(node.data.open, false);
-          
-          node.data.children = [1];
-          node.toggleChildren();
-          assert.equal(node.data.open, true);
-          
-          node.toggleChildren();
-          assert.equal(node.data.open, false);
+        test('select node', function(done) {
+            tree.addEventListener('select', function(event) {
+                assert.equal(event.detail, tree.$.root);
+                done();
+            });
+            tree.$.root.select();
         });
 
-      });
-    </script>
+        test('toggle children', function() {
+            node.data = {
+                children: [],
+                open: false
+            };
 
-  </body>
+            // No children, open state is always false.
+            node.toggleChildren();
+            assert.equal(node.data.open, false);
+
+            // Same thing.
+            node.data.open = true;
+            node.toggleChildren();
+            assert.equal(node.data.open, false);
+
+            // With children, open state is toggled properly.
+            node.data.children = [1];
+            node.toggleChildren();
+            assert.equal(node.data.open, true);
+
+            node.toggleChildren();
+            assert.equal(node.data.open, false);
+        });
+
+    });
+</script>
+
+</body>
 </html>
