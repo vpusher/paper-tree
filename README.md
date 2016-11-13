@@ -87,6 +87,7 @@ See documentation to know the options and structure of the `data` attribute.
 
 ## History
 
+* **1.0.1:** ability to select a node clicking the icon.
 * **1.0.0:** initial release.
 
 ## License

@@ -22,7 +22,7 @@ The following custom properties and mixins are available for styling:
 Custom property | Description | Default
 ----------------|-------------|----------
 `--paper-tree-selected-background-color`      | Highlight color for selected node         | `rgba(200, 200, 200, 0.5)`
-`--paper-tree-selected--color`                | Text and icon color for selected node     | `#000`
+`--paper-tree-selected--color`                | Text and icon color for selected node     | `rgb(0, 0, 0)`
 
 @demo
 -->
@@ -33,42 +33,47 @@ Custom property | Description | Default
 
     <style>
 
-        :host.selected > .node-container > .node-title {
+        :host.selected > .node-container > .node-row {
             background-color: var(--paper-tree-selected-background-color, rgba(200, 200, 200, 0.5));
-            color: var(--paper-tree-selected-color, #000);
+            color: var(--paper-tree-selected-color, rgb(0, 0, 0));
         }
 
-        :host.selected > .node-container > .node-title > #actions {
+        :host.selected > .node-container > .node-row > #actions {
             display: inline-block;
         }
 
-        .node-title {
+        .node-row {
             padding-left: 4px;
             padding-right: 4px;
         }
 
-        .parent {
+        .node-preicon {
             padding-left: 23px;
         }
 
-        .parent.collapsed,
-        .parent.expanded {
+        .node-preicon.collapsed,
+        .node-preicon.expanded {
             padding-left: 0px;
         }
 
-        .parent.collapsed:before {
+        .node-preicon.collapsed:before {
             content: '\002B';
             padding: 5px;
         }
 
-        .parent.expanded:before {
+        .node-preicon.expanded:before {
             content: '\2212';
             padding: 5px;
         }
 
-        .parent,
-        .name {
+        .node-preicon, .node-name {
             cursor: pointer;
+        }
+
+        .node-icon {
+            cursor: pointer;
+            width: 24px;
+            height: 24px;
         }
 
         #actions {
@@ -87,12 +92,6 @@ Custom property | Description | Default
             list-style-type: none;
         }
 
-        iron-icon {
-            cursor: pointer;
-            width: 24px;
-            height: 24px;
-        }
-
         [hidden] {
             display: none;
         }
@@ -100,11 +99,10 @@ Custom property | Description | Default
 
     <template>
         <div class="node-container">
-            <div class="node-title">
-        <span class$="{{_computeClass(data.*)}}" on-click="toggleChildren">
-          <iron-icon icon$="{{_computeIcon(data.icon)}}"></iron-icon>
-        </span>
-                <span class="name" on-click="select">{{data.name}}</span>
+            <div class="node-row">
+                <span class$="{{_computeClass(data.*)}}" on-click="toggleChildren"></span>
+                <iron-icon class="node-icon" icon$="{{_computeIcon(data.icon)}}" on-click="select"></iron-icon>
+                <span class="node-name" on-click="select">{{data.name}}</span>
                 <template is="dom-if" if="{{actions}}">
                     <paper-menu-button id="actions">
                         <paper-icon-button icon="more-vert" noink class="dropdown-trigger"></paper-icon-button>
@@ -184,7 +182,7 @@ Custom property | Description | Default
         _computeClass: function(change) {
             var open = change && change.base && change.base.open;
             var children = change && change.base && change.base.children;
-            return 'parent ' + ((open && children && children.length) ? 'expanded' : children && children.length ? 'collapsed' : '');
+            return 'node-preicon ' + ((open && children && children.length) ? 'expanded' : children && children.length ? 'collapsed' : '');
         },
 
         /**
