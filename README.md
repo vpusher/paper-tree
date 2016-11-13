@@ -12,6 +12,8 @@ Example:
 <custom-element-demo>
   <template>
     <script src="../webcomponentsjs/webcomponents-lite.js"></script>
+    <link rel="import" href="../iron-icons/notification-icons.html">
+    <link rel="import" href="../iron-icons/av-icons.html">
     <link rel="import" href="paper-tree.html">
     <next-code-block></next-code-block>
   </template>
@@ -20,35 +22,37 @@ Example:
 -->
 ```html
 <paper-tree data='{
-    "name": "GOT",
-    "icon": "theaters",
+    "name": "Media Center",
+    "icon": "weekend",
     "open": true,
     "children": [{
-        "name": "Starks",
-        "icon": "turned-in",
+        "name": "Movies",
+        "icon": "av:movie",
         "children": [{
-            "icon": "account-circle",
-            "name": "Eddard"
+            "name": "Interstellar",
+            "icon": "theaters"
         }, {
-            "name": "Catelyn",
-            "icon": "account-circle"
+            "name": "The Godfather",
+            "icon": "theaters"
         }, {
-            "name": "Sansa",
-            "icon": "account-circle"
-        }, {
-            "name": "Robb",
-            "icon": "account-circle"
-        }, {
-            "name": "Bran",
-            "icon": "account-circle"
-        }, {
-            "name": "Arya",
-            "icon": "account-circle"
-        }, {
-            "name": "Rickson",
-            "icon": "account-circle"
+            "name": "Pulp Fiction",
+            "icon": "theaters"
         }]
-    }]}'>
+    }, {
+        "name": "TV Shows",
+        "icon": "notification:live-tv",
+        "children": [{
+            "name": "Breaking Bad",
+            "icon": "theaters"
+        }, {
+            "name": "Game of Thrones",
+            "icon": "theaters"
+        }]
+    }]}'
+    actions='[{
+        "label": "Play",
+        "event": "play"
+    }]'>
  </paper-tree>
 ```
 
@@ -83,7 +87,7 @@ See documentation to know the options and structure of the `data` attribute.
 
 ## History
 
-* **1.0:** initial release.
+* **1.0.0:** initial release.
 
 ## License
 

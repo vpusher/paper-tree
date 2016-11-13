@@ -154,7 +154,11 @@ Custom property | Description | Default
             },
 
             /**
-             * Actions available this node.
+             * `actions` available for this node. Each action object has the following fields:
+             *
+             * - `action.label`: string representing the display name of the menu item.
+             * - `action.event`: string which is the event name to dispatch whenever the item is clicked.
+             *
              */
             actions: {
                 type: Array,
