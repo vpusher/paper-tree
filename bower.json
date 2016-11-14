@@ -8,6 +8,7 @@
     "tree-view",
     "file-tree",
     "web-component",
+    "web-components",
     "polymer"
   ],
   "homepage": "https://github.com/vpusher/paper-tree",
