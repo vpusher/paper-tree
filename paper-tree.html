@@ -101,8 +101,14 @@ Example:
             if(this.selected) {
                 this.toggleClass("selected", false, this.selected);
             }
-            this.selected = e.target;
-            this.toggleClass("selected", true, this.selected);
+
+            // Only selects `<paper-tree-node>`.
+            if (e.detail && e.detail.tagName === 'PAPER-TREE-NODE') {
+                this.selected = e.detail;
+                this.toggleClass("selected", true, this.selected);
+            } else {
+                this.selected = null;
+            }
         }
 
     });

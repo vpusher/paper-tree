@@ -22,7 +22,7 @@ The following custom properties and mixins are available for styling:
 Custom property | Description | Default
 ----------------|-------------|----------
 `--paper-tree-selected-background-color`      | Highlight color for selected node         | `rgba(200, 200, 200, 0.5)`
-`--paper-tree-selected--color`                | Text and icon color for selected node     | `rgb(0, 0, 0)`
+`--paper-tree-selected-color`                | Text and icon color for selected node     | `inherit`
 
 @demo
 -->
@@ -33,12 +33,12 @@ Custom property | Description | Default
 
     <style>
 
-        :host.selected > .node-container > .node-row {
+        :host(.selected) > .node-container > .node-row {
             background-color: var(--paper-tree-selected-background-color, rgba(200, 200, 200, 0.5));
-            color: var(--paper-tree-selected-color, rgb(0, 0, 0));
+            color: var(--paper-tree-selected-color, inherit);
         }
 
-        :host.selected > .node-container > .node-row > #actions {
+        :host(.selected) > .node-container > .node-row > #actions {
             display: inline-block;
         }
 
@@ -204,6 +204,13 @@ Custom property | Description | Default
          */
         select: function() {
             this.fire("select", this);
+        },
+
+        /**
+         * Returns the parent node. Returns `null` if root.
+         */
+        getParent: function () {
+            return this.domHost.tagName === 'WOOD-TREE-NODE' ? this.domHost : null;
         },
 
         /**
