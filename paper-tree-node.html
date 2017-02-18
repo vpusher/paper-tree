@@ -66,6 +66,16 @@ Custom property | Description | Default
             padding: 5px;
         }
 
+        .node-preicon.loading:before {
+            content: '';
+            background:url('loading.svg');
+            background-size:cover;
+            position:absolute;
+            width:24px;
+            height:24px;
+            margin-left:-24px;
+        }
+
         .node-preicon, .node-name {
             cursor: pointer;
         }
@@ -101,7 +111,7 @@ Custom property | Description | Default
         <div class="node-container">
             <div class="node-row">
                 <span class$="{{_computeClass(data.*)}}" on-click="toggleChildren"></span>
-                <iron-icon class="node-icon" icon$="{{_computeIcon(data.icon)}}" on-click="select"></iron-icon>
+                <iron-icon class="node-icon" icon$="{{_computeIcon(data)}}" src$="[[data.src]]" on-click="select"></iron-icon>
                 <span class="node-name" on-click="select">{{data.name}}</span>
                 <template is="dom-if" if="{{actions}}">
                     <paper-menu-button id="actions">
@@ -174,12 +184,20 @@ Custom property | Description | Default
          */
 
         /**
+         * The `toggle-children` event is fired whenever a tree node is expanded or collapsed.
+         * This event can be used by the host to lazy load grandchildren.
+         *
+         * @event toggle-children
+         */
+
+        /**
          * Returns the necessary classes.
          *
          * @param {object} change An object containing the property that changed and its value.
          * @return {string} The class name indicating whether the node is open or closed
          */
         _computeClass: function(change) {
+            if(change && change.base && change.base.loading) return 'node-preicon loading';
             var open = change && change.base && change.base.open;
             var children = change && change.base && change.base.children;
             return 'node-preicon ' + ((open && children && children.length) ? 'expanded' : children && children.length ? 'collapsed' : '');
@@ -191,8 +209,10 @@ Custom property | Description | Default
          * @param {string=folder} an icon name.
          * @return {string} the computed icon name.
          */
-        _computeIcon: function(icon) {
-            return icon ? icon : 'folder';
+        _computeIcon: function(data) {
+            //The docs say that scr takes precedence over icon, but this is not true.
+            if(data.src) return '';
+            return data.icon ? data.icon : 'folder';
         },
 
         _actionClicked: function (event) {
@@ -218,6 +238,7 @@ Custom property | Description | Default
          */
         toggleChildren: function() {
             this.set("data.open", !this.data.open && this.data.children && this.data.children.length);
+            this.fire("toggle-children", this);
         }
 
     });
