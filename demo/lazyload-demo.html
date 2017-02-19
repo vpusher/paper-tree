@@ -1,0 +1,152 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-tree/paper-tree.html">
+
+<dom-module id="lazyload-demo">
+    <template>
+        <style>
+            :host {
+                display: block;
+            }
+        </style>
+        <h2>Lazy loading paper-tree demo</h2>
+        <p>Here we use the toggle-children event to lazyload grandchildren.
+            We've added some delay so you can see the effect of the loading icon.
+            These nodes can be expanded indefinitely due to circular references. </p>
+        <paper-tree
+                id="tree4"
+                on-select="nodeSelected"
+                on-toggle-children="toggleChildren"
+                on-show="show"
+                data=[[doc]]
+                actions='[{
+                    "label": "Play",
+                    "event": "show"
+                }]'>
+        </paper-tree>
+    </template>
+
+    <script>
+        Polymer({
+
+            is: 'lazyload-demo',
+
+            properties: {
+                doc:{
+                    type: Object,
+                    value: function() { return {
+                        name: 'Loading...',
+                        loading: true
+                    };}
+                },
+                rootDocId:{
+                    type: String,
+                    value: '_00'
+                },
+                data:{
+                    type: Object,
+                    value: {
+                        _00: {name: 'Cronus', icon:'folder', children:['_01', '_02', '_03', '_04', '_05', '_06']},
+                        _01: {name: 'Zeus', icon:'folder', children:['_07','_08','_09','_10','_11','_12']},
+                        _02: {name: 'Hera', icon:'folder'},
+                        _03: {name: 'Poseidon', icon:'folder', children:['_11','_12']},
+                        _04: {name: 'Hestia', icon:'folder'},
+                        _05: {name: 'Hades', icon:'folder', children:['_09','_10']},
+                        _06: {name: 'Demeter', icon:'folder'},
+                        _07: {name: 'Dionysus', icon:'folder'},
+                        _08: {name: 'Hermes', icon:'folder', children:['_01', '_02', '_03', '_04', '_05', '_06']},
+                        _09: {name: 'Apollo', icon:'folder'},
+                        _10: {name: 'Artemis', icon:'folder'},
+                        _11: {name: 'Athena', icon:'folder', children:['_00']},
+                        _12: {name: 'Ares', icon:'folder'},
+                        _13: {name: 'Hephaestus', icon:'folder', children:['_03', '_05', '_06']}
+                    }
+                }
+            },
+            nodeSelected: function (event){
+                var nodeData = Polymer.dom(event).rootTarget.data;
+                alert('Selected node: ' + nodeData.name);
+            },
+            show: function (event){
+                var nodeData = Polymer.dom(event).rootTarget.data;
+                alert('Show node: ' + nodeData.name);
+            },
+            toggleChildren: function(event){
+                var self = this;
+                var nodeData = Polymer.dom(event).rootTarget.data;
+                //We only have to get grandchildren once
+                if(nodeData.gotGrandChildren) return;
+                nodeData.gotGrandChildren = true;
+                nodeData.children.forEach(function(child){
+                    var updatePath = child.updatePath;
+                    //Get the grandchildren for this child.
+                    self.getChildren(child.children).then(function(childrenArr){
+                        self.addChildrenToTree(childrenArr, updatePath);
+                    });
+                });
+            },
+            ready: function(){
+                var self = this;
+                // Get the root doc for the tree
+                self.getDoc(this.rootDocId).then(function(rootDoc){
+                    var result = {
+                        name: rootDoc.name,
+                        open: false,
+                        updatePath: 'doc',
+                        loading: true,
+                        children: rootDoc.children
+                    };
+                    self.doc = result;
+                    //Get the children for the root.
+                    self.getChildren(rootDoc.children).then(function(childrenArr){
+                        self.addChildrenToTree(childrenArr, 'doc');
+                    });
+                });
+            },
+            addChildrenToTree: function(childrenArr, updatePath){
+                var self = this;
+                var idx = 0;
+                var results = [];
+                childrenArr.forEach(function(child){
+                    results.push({
+                        name: child.name,
+                        open: false,
+                        updatePath: updatePath+'.children.'+idx,
+                        loading: true,
+                        children: child.children
+                    });
+                    idx++;
+                });
+                self.set(updatePath+'.loading', false);
+                self.set(updatePath+'.children', results);
+            },
+            getDoc: function(docId) {
+                //Pretend we're getting data from the data store
+                var self = this;
+                return new Promise(function(resolve, reject) {
+                    window.setTimeout(function() {
+                        resolve(self.data[docId]);
+                    }, 1000);
+                });
+            },
+            getChildren: function(childrenIdArr) {
+                var self = this;
+                //Pretend we're getting data from the data store
+                if(!childrenIdArr) return Promise.resolve([]);
+                return new Promise(function(resolve, reject) {
+                    window.setTimeout(function() {
+                        var resultsArr = [];
+                        childrenIdArr.forEach(function(childId){
+                            resultsArr.push(self.data[childId]);
+                        });
+                        resolve(resultsArr);
+                    }, Math.floor(Math.random() * 2000));
+                });
+            },
+            dataChanged: function(newValue, oldValue) {
+                console.log('doc:', newValue);
+            }
+
+        });
+    </script>
+</dom-module>
+
