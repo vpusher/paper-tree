@@ -6,6 +6,16 @@
         <style>
             :host {
                 display: block;
+
+                --loading-icon-theme: {
+                    content: '';
+                    background:url('loading.svg');
+                    background-size:cover;
+                    position:absolute;
+                    width:24px;
+                    height:24px;
+                    margin-left:-24px;
+                };
             }
         </style>
         <h2>Lazy loading paper-tree demo</h2>
@@ -23,8 +33,7 @@
                 doc:{
                     type: Object,
                     value: {
-                        name: 'Loading...',
-                        loading: true
+                        name: 'Loading...'
                     }
                 }
             },
@@ -33,8 +42,13 @@
                 var self = this;
                 // Update the root doc for the tree after 1 second delay
                 window.setTimeout(function() {
-                    var rootDoc = {name:'Cronos', loading:true, updatePath:'doc'};
+                    var rootDoc = {name:'Cronos', updatePath:'doc'};
                     self.doc = rootDoc;
+
+                    //var rootNode = self.root;
+                    //TODO find the span that will have the loading class
+                    //self.toggleClass('loading', true, [rootNode]);
+
                     // Add the children to the root.
                     self.addChildrenToNode(rootDoc);
                 }, 1000);
@@ -46,6 +60,7 @@
                 //We only have to get the grandchildren once
                 if(nodeData.gotGrandChildren) return;
                 nodeData.gotGrandChildren = true;
+
                 nodeData.children.forEach(function(child){
                     //Add grandchildren to the child.
                     self.addChildrenToNode(child);
@@ -56,16 +71,19 @@
                 var self = this;
                 // Wait a couple of seconds to simulate async data retrieval
                 window.setTimeout(function() {
-                    var updatePath = treeNode.updatePath;
+
+                    var updatePath = treeNode.updatePath+'.children';
                     var children = [
-                        {name:'Zeus', loading:true, updatePath:updatePath+'.children.0'},
-                        {name:'Apollo', loading:true, updatePath:updatePath+'.children.1'},
-                        {name:'Athena', loading:true, updatePath:updatePath+'.children.2'},
-                        {name:'Poseidon', loading:true, updatePath:updatePath+'.children.3'}
+                        {name:'Zeus', updatePath:updatePath+'.0'},
+                        {name:'Apollo', updatePath:updatePath+'.1'},
+                        {name:'Athena', updatePath:updatePath+'.2'},
+                        {name:'Poseidon', updatePath:updatePath+'.3'}
                     ];
+
                     // We use set(updatePath... to trigger the correct valueChange events in the tree
-                    self.set(updatePath+'.loading', false);
-                    self.set(updatePath+'.children', children);
+                    // Simply setting children on the treeNode won't have any effect.
+                    self.set(updatePath, children);
+
                 }, Math.floor(Math.random() * 2000));
             }
         });

@@ -22,7 +22,8 @@ The following custom properties and mixins are available for styling:
 Custom property | Description | Default
 ----------------|-------------|----------
 `--paper-tree-selected-background-color`      | Highlight color for selected node         | `rgba(200, 200, 200, 0.5)`
-`--paper-tree-selected-color`                | Text and icon color for selected node     | `inherit`
+`--paper-tree-selected-color`                 | Text and icon color for selected node     | `inherit`
+`--loading-icon-theme`                        | Theme for loading icon                    | `no default`
 
 @demo
 -->
@@ -40,6 +41,10 @@ Custom property | Description | Default
 
         :host(.selected) > .node-container > .node-row > #actions {
             display: inline-block;
+        }
+
+        .node-preicon.collapsed.loading:before {
+            @apply(--loading-icon-theme);
         }
 
         .node-row {
@@ -68,16 +73,6 @@ Custom property | Description | Default
         .node-preicon.expanded:before {
             content: '\2212';
             padding: 5px;
-        }
-
-        .node-preicon.loading:before {
-            content: '';
-            background:url('loading.svg');
-            background-size:cover;
-            position:absolute;
-            width:24px;
-            height:24px;
-            margin-left:-24px;
         }
 
         .node-preicon, .node-name {
@@ -201,7 +196,6 @@ Custom property | Description | Default
          * @return {string} The class name indicating whether the node is open or closed
          */
         _computeClass: function(change) {
-            if(change && change.base && change.base.loading) return 'node-preicon loading';
             var open = change && change.base && change.base.open;
             var children = change && change.base && change.base.children;
             return 'node-preicon ' + ((open && children && children.length) ? 'expanded' : children && children.length ? 'collapsed' : '');
