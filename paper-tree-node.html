@@ -188,10 +188,10 @@ Custom property | Description | Default
          */
 
         /**
-         * The `toggle-children` event is fired whenever a tree node is expanded or collapsed.
+         * The `toggle` event is fired whenever a tree node is expanded or collapsed.
          * This event can be used by the host to lazy load grandchildren.
          *
-         * @event toggle-children
+         * @event toggle
          */
 
         /**
@@ -242,7 +242,7 @@ Custom property | Description | Default
          */
         toggleChildren: function() {
             this.set("data.open", !this.data.open && this.data.children && this.data.children.length);
-            this.fire("toggle-children", this);
+            this.fire("toggle", this);
         }
 
     });
