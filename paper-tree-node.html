@@ -21,9 +21,10 @@ The following custom properties and mixins are available for styling:
 
 Custom property | Description | Default
 ----------------|-------------|----------
-`--paper-tree-selected-background-color`      | Highlight color for selected node         | `rgba(200, 200, 200, 0.5)`
-`--paper-tree-selected-color`                 | Text and icon color for selected node     | `inherit`
-`--loading-icon-theme`                        | Theme for loading icon                    | `no default`
+`--paper-tree-selected-background-color`      | Highlight color for selected node           | `rgba(200, 200, 200, 0.5)`
+`--paper-tree-selected-color`                 | Text and icon color for selected node       | `inherit`
+`--paper-tree-preicon-theme`                  | Change theme for node pre-icon (+/- toggle) |
+`--paper-tree-icon-theme`                     | Change theme for node icon                  |
 
 @demo
 -->
@@ -43,8 +44,8 @@ Custom property | Description | Default
             display: inline-block;
         }
 
-        .node-preicon.loading:before {
-            @apply(--loading-icon-theme);
+        .node-preicon:before {
+            @apply(--paper-tree-preicon-theme);
         }
 
         .node-row {
@@ -83,6 +84,7 @@ Custom property | Description | Default
             cursor: pointer;
             width: 24px;
             height: 24px;
+            @apply(--paper-tree-icon-theme);
         }
 
         #actions {
@@ -110,7 +112,7 @@ Custom property | Description | Default
         <div class="node-container">
             <div class="node-row">
                 <span class$="{{_computeClass(data.*)}}" on-click="toggleChildren"></span>
-                <iron-icon class="node-icon" icon$="{{_computeIcon(data)}}" src$="[[data.src]]" on-click="select"></iron-icon>
+                <iron-icon class="node-icon" icon$="{{_computeIcon(data)}}" on-click="select"></iron-icon>
                 <span class="node-name" on-click="select">{{data.name}}</span>
                 <template is="dom-if" if="{{actions}}">
                     <paper-menu-button id="actions">
@@ -208,9 +210,7 @@ Custom property | Description | Default
          * @return {string} the computed icon name.
          */
         _computeIcon: function(data) {
-            //The docs say that scr takes precedence over icon, but this is not true.
-            if(data.src) return '';
-            return data.icon ? data.icon : 'folder';
+            return data && data.icon ? data.icon : 'folder';
         },
 
         _actionClicked: function (event) {
@@ -225,10 +225,17 @@ Custom property | Description | Default
         },
 
         /**
-         * Returns the parent node. Returns `null` if root.
+         * Returns the parent tree node. Returns `null` if root.
          */
         getParent: function () {
-            return this.domHost.tagName === 'WOOD-TREE-NODE' ? this.domHost : null;
+            return this.domHost.tagName === 'PAPER-TREE-NODE' ? this.domHost : null;
+        },
+
+        /**
+         * Returns the children tree nodes.
+         */
+        getChildren: function () {
+            return Polymer.dom(this.root).querySelectorAll('paper-tree-node');
         },
 
         /**

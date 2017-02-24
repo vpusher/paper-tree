@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <link rel="import" href="../paper-tree.html" />
+</head>
+<body>
+
+<template id="t" is="dom-bind">
+    <style is="custom-style">
+        #tree {
+            --paper-tree-preicon-theme: {
+                content: '';
+                background:url('loading.svg');
+                background-size:cover;
+                position:absolute;
+                width:24px;
+                height:24px;
+                margin-left:-24px;
+            };
+        }
+    </style>
+    <h2>Lazy loading paper-tree demo</h2>
+    <p>
+        Here we use the 'toggle' event to lazy load grandchildren.<br>
+        We've added some delay so you can see the effect of the loading icon.
+    </p>
+    <paper-tree id="tree" on-toggle="onToggle" data='{"name": "Loading..."}'></paper-tree>
+    <script>
+
+    var template = document.querySelector('#t'),
+        tree = template.$.tree;
+
+    // Update the root data after 1 second delay
+    window.setTimeout(function() {
+        tree.data = { name:'Cronos' };
+        // Fetching root children ...
+        template.fetchNodeChildren(tree.$.root);
+    }, 1000);
+
+
+    template.onToggle = function(event) {
+        var target = event.detail;
+
+        !target.loaded && target.getChildren().forEach(function(child){
+            // Fetching children ...
+            this.fetchNodeChildren(child);
+        }, this);
+    },
+
+    template.setLoadingState = function(node, enabled) {
+
+        if (enabled) {
+            node.customStyle['--paper-tree-preicon-theme'] = '\
+                content: \'\';\
+                background:url(\'loading.svg\');\
+                background-size:cover;\
+                position:absolute;\
+                width:24px;\
+                height:24px;\
+                margin-left:-24px;\
+            ';
+        } else {
+            node.customStyle['--paper-tree-preicon-theme'] = ';';
+        }
+
+        node.updateStyles();
+    },
+
+    template.fetchNodeChildren = function(node) {
+
+        // Set loading styles
+        this.setLoadingState(node, true);
+
+        // Update the children after a random delay
+        window.setTimeout(function() {
+
+            node.set('data.children', [
+                {name: 'Zeus'},
+                {name: 'Apollo'},
+                {name: 'Athena'},
+                {name: 'Poseidon'}
+            ]);
+
+            // Reset loading styles
+            this.setLoadingState(node, false);
+
+        }.bind(this), Math.floor(Math.random() * 2000));
+    }
+</script>
+</template>
+
+
+</body>
+</html>
