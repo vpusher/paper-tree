@@ -44,6 +44,7 @@
         var target = event.detail;
 
         !target.loaded && target.getChildren().forEach(function(child){
+            target.loaded = true;
             // Fetching children ...
             this.fetchNodeChildren(child);
         }, this);
