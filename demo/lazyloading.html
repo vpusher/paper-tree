@@ -9,15 +9,15 @@
 
 <template id="t" is="dom-bind">
     <style is="custom-style">
+        @keyframes blinker {
+          50% { opacity: 0; }
+        }
+
         #tree {
-            --paper-tree-preicon-theme: {
-                content: '';
-                background:url('loading.svg');
-                background-size:cover;
-                position:absolute;
-                width:24px;
-                height:24px;
-                margin-left:-24px;
+            --paper-tree-toggle-theme: {
+                animation: blinker 1s linear infinite;
+                content: '⧖';
+                margin-left: -21px;
             };
         }
     </style>
@@ -36,7 +36,7 @@
     window.setTimeout(function() {
         tree.data = { name:'Cronos' };
         // Fetching root children ...
-        template.fetchNodeChildren(tree.$.root);
+        template.fetchChildren(tree.$.root);
     }, 1000);
 
 
@@ -46,30 +46,22 @@
         !target.loaded && target.getChildren().forEach(function(child){
             target.loaded = true;
             // Fetching children ...
-            this.fetchNodeChildren(child);
+            this.fetchChildren(child);
         }, this);
     },
 
     template.setLoadingState = function(node, enabled) {
 
         if (enabled) {
-            node.customStyle['--paper-tree-preicon-theme'] = '\
-                content: \'\';\
-                background:url(\'loading.svg\');\
-                background-size:cover;\
-                position:absolute;\
-                width:24px;\
-                height:24px;\
-                margin-left:-24px;\
-            ';
+            node.customStyle['--paper-tree-toggle-theme'] = 'animation: blinker 1s linear infinite; content: \'⧖\'; margin-left: -21px;';
         } else {
-            node.customStyle['--paper-tree-preicon-theme'] = ';';
+            node.customStyle['--paper-tree-toggle-theme'] = ';';
         }
 
         node.updateStyles();
     },
 
-    template.fetchNodeChildren = function(node) {
+    template.fetchChildren = function(node) {
 
         // Set loading styles
         this.setLoadingState(node, true);
