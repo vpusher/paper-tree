@@ -18,6 +18,7 @@
 <div class="vertical-section-container centered">
 
     <h3>Basic demo with only one node</h3>
+
     <demo-snippet>
         <template>
             <paper-tree id="tree1"></paper-tree>
@@ -166,6 +167,85 @@
                 });
 
             </script>
+        </template>
+    </demo-snippet>
+
+    <h3>Lazy loading demo</h3>
+    <demo-snippet>
+        <template>
+            <template id="t" is="dom-bind">
+                <style is="custom-style">
+                    @keyframes blinker {
+                      50% { opacity: 0; }
+                    }
+
+                    #tree {
+                        --paper-tree-toggle-theme: {
+                            animation: blinker 1s linear infinite;
+                            content: '⧖';
+                            margin-left: -21px;
+                        };
+                    }
+                </style>
+
+                <paper-tree id="tree" on-toggle="onToggle" data='{"name": "Loading..."}'></paper-tree>
+
+                <script>
+
+                    var template = document.querySelector('#t'),
+                        tree = template.$.tree;
+
+                    // Update the root data after 1 second delay
+                    window.setTimeout(function() {
+                        tree.data = { name:'Cronos' };
+                        // Fetching root children ...
+                        template.fetchChildren(tree.$.root);
+                    }, 1000);
+
+
+                    template.onToggle = function(event) {
+                        var target = event.detail;
+
+                        !target.loaded && target.getChildren().forEach(function(child){
+                            target.loaded = true;
+                            // Fetching children ...
+                            this.fetchChildren(child);
+                        }, this);
+                    },
+
+                    template.setLoadingState = function(node, enabled) {
+
+                        if (enabled) {
+                            node.customStyle['--paper-tree-toggle-theme'] = 'animation: blinker 1s linear infinite; content: \'⧖\'; margin-left: -21px;';
+                        } else {
+                            node.customStyle['--paper-tree-toggle-theme'] = ';';
+                        }
+
+                        node.updateStyles();
+                    },
+
+                    template.fetchChildren = function(node) {
+
+                        // Set loading styles
+                        this.setLoadingState(node, true);
+
+                        window.setTimeout(function() {
+
+                            // Add children to the node
+                            node.set('data.children', [
+                                {name: 'Zeus'},
+                                {name: 'Apollo'},
+                                {name: 'Athena'},
+                                {name: 'Poseidon'}
+                            ]);
+
+                            // Reset loading styles
+                            this.setLoadingState(node, false);
+
+                        }.bind(this), Math.floor(Math.random() * 2000));
+                    }
+                </script>
+            </template>
         </template>
     </demo-snippet>
 
