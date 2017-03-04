@@ -124,7 +124,7 @@ Custom property | Description | Default
                     </paper-menu-button>
                 </template>
             </div>
-            <template is="dom-if" if$="{{data.open}}">
+            <template is="dom-if" if="{{data.open}}">
               <ul>
                   <template is="dom-repeat" items="{{data.children}}">
                       <li>
