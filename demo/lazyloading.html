@@ -43,11 +43,13 @@
     template.onToggle = function(event) {
         var target = event.detail;
 
-        !target.loaded && target.getChildren().forEach(function(child){
+        if (!target.loaded) {
             target.loaded = true;
-            // Fetching children ...
-            this.fetchChildren(child);
-        }, this);
+            target.getChildren().forEach(function(child){
+                // Fetching children ...
+                this.fetchChildren(child);
+            }, this);
+        }
     },
 
     template.setLoadingState = function(node, enabled) {

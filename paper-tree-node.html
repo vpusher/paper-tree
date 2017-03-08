@@ -124,13 +124,15 @@ Custom property | Description | Default
                     </paper-menu-button>
                 </template>
             </div>
-            <ul hidden$={{!data.open}}>
-                <template is="dom-repeat" items="{{data.children}}">
-                    <li>
-                        <paper-tree-node data="{{item}}" actions="{{actions}}"></paper-tree-node>
-                    </li>
-                </template>
-            </ul>
+            <template is="dom-if" if="{{data.open}}">
+              <ul>
+                  <template is="dom-repeat" items="{{data.children}}">
+                      <li>
+                          <paper-tree-node data="{{item}}" actions="{{actions}}"></paper-tree-node>
+                      </li>
+                  </template>
+              </ul>
+            </template>
         </div>
     </template>
 
@@ -185,7 +187,6 @@ Custom property | Description | Default
 
         /**
          * The `toggle` event is fired whenever a tree node is expanded or collapsed.
-         * This event can be used by the host to lazy load grandchildren.
          *
          * @event toggle
          */
@@ -242,7 +243,7 @@ Custom property | Description | Default
          */
         toggleChildren: function() {
             this.set("data.open", !this.data.open && this.data.children && this.data.children.length);
-            this.fire("toggle", this);
+            setTimeout(this.fire.bind(this, "toggle", this));
         }
 
     });
