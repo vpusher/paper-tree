@@ -1,7 +1,7 @@
 {
   "name": "paper-tree",
   "main": "paper-tree.html",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A custom element displaying a browsable tree.",
   "keywords": [
     "tree",
