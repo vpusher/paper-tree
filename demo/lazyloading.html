@@ -8,19 +8,21 @@
 <body>
 
 <template id="t" is="dom-bind">
-    <style is="custom-style">
-        @keyframes blinker {
-          50% { opacity: 0; }
-        }
+    <custom-style>
+        <style is="custom-style">
+            @keyframes blinker {
+              50% { opacity: 0; }
+            }
 
-        #tree {
-            --paper-tree-toggle-theme: {
-                animation: blinker 1s linear infinite;
-                content: '⧖';
-                margin-left: -21px;
-            };
-        }
-    </style>
+            #tree {
+                --paper-tree-toggle-theme: {
+                    animation: blinker 1s linear infinite;
+                    content: '⧖';
+                    margin-left: -21px;
+                };
+            }
+        </style>
+    </custom-style>
     <h2>Lazy loading paper-tree demo</h2>
     <p>
         Here we use the 'toggle' event to lazy load grandchildren.<br>
@@ -54,13 +56,18 @@
 
     template.setLoadingState = function(node, enabled) {
 
-        if (enabled) {
-            node.customStyle['--paper-tree-toggle-theme'] = 'animation: blinker 1s linear infinite; content: \'⧖\'; margin-left: -21px;';
-        } else {
-            node.customStyle['--paper-tree-toggle-theme'] = ';';
-        }
+         if (!node.customStyle) {
+             console.log("TODO: customStyle has been removed from Polymer 2.0, and updateStyles does not appear to work for at-rules and mixins.");
+             return;
+         }
+         
+         if (enabled) {
+             node.customStyle['--paper-tree-toggle-theme'] = 'animation: blinker 1s linear infinite; content: \'⧖\'; margin-left: -21px;';
+         } else {
+             node.customStyle['--paper-tree-toggle-theme'] = ';';
+         }
 
-        node.updateStyles();
+         node.updateStyles();
     },
 
     template.fetchChildren = function(node) {
