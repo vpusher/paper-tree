@@ -7,20 +7,7 @@
 </head>
 <body>
 
-<template id="t" is="dom-bind">
-    <style is="custom-style">
-        @keyframes blinker {
-          50% { opacity: 0; }
-        }
-
-        #tree {
-            --paper-tree-toggle-theme: {
-                animation: blinker 1s linear infinite;
-                content: '⧖';
-                margin-left: -21px;
-            };
-        }
-    </style>
+<dom-bind><template is="dom-bind">
     <h2>Lazy loading paper-tree demo</h2>
     <p>
         Here we use the 'toggle' event to lazy load grandchildren.<br>
@@ -29,7 +16,7 @@
     <paper-tree id="tree" on-toggle="onToggle" data='{"name": "Loading..."}'></paper-tree>
     <script>
 
-    var template = document.querySelector('#t'),
+    var template = document.querySelector('dom-bind'),
         tree = template.$.tree;
 
     // Update the root data after 1 second delay
@@ -53,14 +40,7 @@
     },
 
     template.setLoadingState = function(node, enabled) {
-
-        if (enabled) {
-            node.customStyle['--paper-tree-toggle-theme'] = 'animation: blinker 1s linear infinite; content: \'⧖\'; margin-left: -21px;';
-        } else {
-            node.customStyle['--paper-tree-toggle-theme'] = ';';
-        }
-
-        node.updateStyles();
+         node.set('data.loading', enabled);
     },
 
     template.fetchChildren = function(node) {
@@ -84,7 +64,7 @@
         }.bind(this), Math.floor(Math.random() * 2000));
     }
 </script>
-</template>
+</template></dom-bind>
 
 
 </body>

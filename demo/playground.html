@@ -3,11 +3,12 @@
 <html>
 <head>
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <link rel="import" href="../../web-animations-js/web-animations-next-lite.min.html"> <!-- Shim for KeyframeEffect, used in neon-animation/fade-in-animation (from paper-menu-button). The KeyframeEffect exception did however not appear in pre 2.0... -->
 
     <link rel="import" href="../paper-tree.html" />
 </head>
 <body>
-<template is="dom-bind">
+<dom-bind><template is="dom-bind">
     <h3>GOT Tree: {{selected.data.name}}</h3>
     <paper-tree selected="{{selected}}"></paper-tree>
     <script>
@@ -32,9 +33,9 @@
             ]
         };
     </script>
-</template>
+</template></dom-bind>
 
-<template is="dom-bind">
+<dom-bind><template is="dom-bind">
     <h3>Media Tree</h3>
     <paper-tree data='{
     "name": "Media Center",
@@ -57,6 +58,6 @@
         "event": "play"
     }]'>
     </paper-tree>
-</template>
+</template></dom-bind>
 </body>
 </html>

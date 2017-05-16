@@ -3,7 +3,7 @@
 <link rel="import" href="../iron-icon/iron-icon.html">
 <link rel="import" href="../paper-menu-button/paper-menu-button.html">
 <link rel="import" href="../paper-icon-button/paper-icon-button.html">
-<link rel="import" href="../paper-menu/paper-menu.html">
+<link rel="import" href="../paper-listbox/paper-listbox.html">
 <link rel="import" href="../paper-item/paper-item.html">
 
 <!--
@@ -33,81 +33,91 @@ Custom property | Description | Default
 
 <dom-module id="paper-tree-node">
 
-    <style>
-
-        :host(.selected) > .node-container > .node-row {
-            background-color: var(--paper-tree-selected-background-color, rgba(200, 200, 200, 0.5));
-            color: var(--paper-tree-selected-color, inherit);
-        }
-
-        :host(.selected) > .node-container > .node-row > #actions {
-            display: inline-block;
-        }
-
-        .node-container {
-            white-space: nowrap;
-        }
-
-        .node-row {
-            padding-left: 4px;
-            padding-right: 4px;
-        }
-
-        .node-preicon.collapsed,
-        .node-preicon.expanded {
-            padding-left: 0px;
-        }
-
-        .node-preicon {
-            padding-left: 18px;
-        }
-
-        .node-preicon:before {
-            margin-right: 5px;
-            @apply(--paper-tree-toggle-theme);
-        }
-
-        .node-preicon.collapsed:before {
-            content: '\002B';
-        }
-
-        .node-preicon.expanded:before {
-            content: '\2212';
-        }
-
-        .node-preicon, .node-name {
-            cursor: pointer;
-        }
-
-        .node-icon {
-            cursor: pointer;
-            width: 24px;
-            height: 24px;
-            @apply(--paper-tree-icon-theme);
-        }
-
-        #actions {
-            display: none;
-            float: right;
-            padding: 0;
-            top: -8px; /* cancel the padding of `paper-icon-button`. */
-        }
-
-        ul {
-            margin: 0;
-            padding-left: 20px;
-        }
-
-        li {
-            list-style-type: none;
-        }
-
-        [hidden] {
-            display: none;
-        }
-    </style>
-
     <template>
+        <style>
+
+            :host(.selected) > .node-container > .node-row {
+                background-color: var(--paper-tree-selected-background-color, rgba(200, 200, 200, 0.5));
+                color: var(--paper-tree-selected-color, inherit);
+            }
+
+            :host(.selected) > .node-container > .node-row > #actions {
+                display: inline-block;
+            }
+
+            .node-container {
+                white-space: nowrap;
+            }
+
+            .node-row {
+                padding-left: 4px;
+                padding-right: 4px;
+            }
+
+            .node-preicon.collapsed,
+            .node-preicon.expanded {
+                padding-left: 0px;
+            }
+
+            .node-preicon {
+                padding-left: 18px;
+            }
+
+            .node-preicon:before {
+                margin-right: 5px;
+                @apply --paper-tree-toggle-theme;
+            }
+
+            .node-preicon.collapsed:before {
+                content: '\002B';
+            }
+
+            .node-preicon.expanded:before {
+                content: '\2212';
+            }
+
+             @keyframes blinker {
+                 50% { opacity: 0; }
+             }
+
+            .node-preicon.loading:before {
+                animation: blinker 1s linear infinite;
+                content: '⧖';
+                margin-left: -21px;
+            }
+
+            .node-preicon, .node-name {
+                cursor: pointer;
+            }
+
+            .node-icon {
+                cursor: pointer;
+                width: 24px;
+                height: 24px;
+                @apply --paper-tree-icon-theme;
+            }
+
+            #actions {
+                display: none;
+                float: right;
+                padding: 0;
+                top: -8px; /* cancel the padding of `paper-icon-button`. */
+            }
+
+            ul {
+                margin: 0;
+                padding-left: 20px;
+            }
+
+            li {
+                list-style-type: none;
+            }
+
+            [hidden] {
+                display: none;
+            }
+        </style>
+
         <div class="node-container">
             <div class="node-row">
                 <span class$="{{_computeClass(data.*)}}" on-click="toggleChildren"></span>
@@ -115,12 +125,12 @@ Custom property | Description | Default
                 <span class="node-name" on-click="select">{{data.name}}</span>
                 <template is="dom-if" if="{{actions}}">
                     <paper-menu-button id="actions">
-                        <paper-icon-button icon="more-vert" noink class="dropdown-trigger"></paper-icon-button>
-                        <paper-menu class="dropdown-content">
+                        <paper-icon-button icon="more-vert" noink slot="dropdown-trigger"></paper-icon-button>
+                        <paper-listbox slot="dropdown-content">
                             <template is="dom-repeat" items="{{actions}}">
                                 <paper-item on-click="_actionClicked">{{item.label}}</paper-item>
                             </template>
-                        </paper-menu>
+                        </paper-listbox>
                     </paper-menu-button>
                 </template>
             </div>
@@ -198,9 +208,20 @@ Custom property | Description | Default
          * @return {string} The class name indicating whether the node is open or closed
          */
         _computeClass: function(change) {
-            var open = change && change.base && change.base.open;
-            var children = change && change.base && change.base.children;
-            return 'node-preicon ' + ((open && children && children.length) ? 'expanded' : children && children.length ? 'collapsed' : '');
+            var cls = 'node-preicon',
+                data = change && change.base;
+            if (!data) return cls;
+
+            if (data.loading) {
+                cls += ' loading';
+            } else if (!data.children || !data.children.length) {
+                // No children => no preicon
+            } else if(data.open) {
+                cls += ' expanded';
+            } else {
+                cls += ' collapsed';
+            }
+            return cls;
         },
 
         /**
