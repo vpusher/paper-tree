@@ -7,7 +7,7 @@
     <title>paper-tree Demo</title>
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
 
-    <link rel="import" href="../../web-animations-js/web-animations-next-lite.min.html">
+    <link rel="import" href="../../web-animations-js/web-animations-next-lite.min.html"> <!-- Shim for KeyframeEffect, used in neon-animation/fade-in-animation (from paper-menu-button). The KeyframeEffect exception did however not appear in pre 2.0... -->
     <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
     <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
     <link rel="import" href="../paper-tree.html">
@@ -178,21 +178,6 @@
         <template>
             <dom-bind>
                 <template is="dom-bind">
-                    <custom-style>
-                        <style is="custom-style">
-                            @keyframes blinker {
-                              50% { opacity: 0; }
-                            }
-
-                            #tree {
-                                --paper-tree-toggle-theme: {
-                                    animation: blinker 1s linear infinite;
-                                    content: '⧖';
-                                    margin-left: -21px;
-                                };
-                            }
-                        </style>
-                    </custom-style>
 
                     <paper-tree id="tree" on-toggle="onToggle" data='{"name": "Loading..."}'></paper-tree>
 
@@ -222,19 +207,7 @@
                         },
 
                         template.setLoadingState = function(node, enabled) {
-
-                            if (!node.customStyle) {
-                                console.log("TODO: customStyle has been removed from Polymer 2.0, and updateStyles does not appear to work for at-rules and mixins.");
-                                return;
-                            }
-
-                            if (enabled) {
-                                node.customStyle['--paper-tree-toggle-theme'] = 'animation: blinker 1s linear infinite; content: \'⧖\'; margin-left: -21px;';
-                            } else {
-                                node.customStyle['--paper-tree-toggle-theme'] = ';';
-                            }
-
-                            node.updateStyles();
+                            node.set('data.loading', enabled);
                         },
 
                         template.fetchChildren = function(node) {

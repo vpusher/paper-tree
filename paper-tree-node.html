@@ -76,6 +76,16 @@ Custom property | Description | Default
                 content: '\2212';
             }
 
+             @keyframes blinker {
+                 50% { opacity: 0; }
+             }
+
+            .node-preicon.loading:before {
+                animation: blinker 1s linear infinite;
+                content: '⧖';
+                margin-left: -21px;
+            }
+
             .node-preicon, .node-name {
                 cursor: pointer;
             }
@@ -198,9 +208,20 @@ Custom property | Description | Default
          * @return {string} The class name indicating whether the node is open or closed
          */
         _computeClass: function(change) {
-            var open = change && change.base && change.base.open;
-            var children = change && change.base && change.base.children;
-            return 'node-preicon ' + ((open && children && children.length) ? 'expanded' : children && children.length ? 'collapsed' : '');
+            var cls = 'node-preicon',
+                data = change && change.base;
+            if (!data) return cls;
+
+            if (data.loading) {
+                cls += ' loading';
+            } else if (!data.children || !data.children.length) {
+                // No children => no preicon
+            } else if(data.open) {
+                cls += ' expanded';
+            } else {
+                cls += ' collapsed';
+            }
+            return cls;
         },
 
         /**

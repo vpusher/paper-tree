@@ -28,18 +28,18 @@ suite('<paper-tree-node>', function() {
     test('properly computes its classes', function() {
         // Some defaults tests
         var answer = node._computeClass();
-        assert.equal(answer, 'node-preicon ');
+        assert.equal(answer, 'node-preicon');
 
         answer = node._computeClass({});
-        assert.equal(answer, 'node-preicon ');
+        assert.equal(answer, 'node-preicon');
 
         // Ask for expanded with no children
         answer = node._computeClass({base: {open: true}});
-        assert.equal(answer, 'node-preicon ');
+        assert.equal(answer, 'node-preicon');
 
         // Ask for expanded with empty children
         answer = node._computeClass({base: {open: true, children:[]}});
-        assert.equal(answer, 'node-preicon ');
+        assert.equal(answer, 'node-preicon');
 
         // Ask for collapsed with children
         answer = node._computeClass({base: {open: false, children:[0]}});
@@ -48,6 +48,10 @@ suite('<paper-tree-node>', function() {
         // Ask for expanded with children
         answer = node._computeClass({base: {open: true, children:[0]}});
         assert.equal(answer, 'node-preicon expanded');
+
+        // Ask for loading with children
+        answer = node._computeClass({base: {loading: true, children:[0]}});
+        assert.equal(answer, 'node-preicon loading');
     });
 
     test('properly computes its icon', function() {
