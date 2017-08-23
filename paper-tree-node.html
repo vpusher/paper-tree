@@ -25,11 +25,13 @@ Custom property | Description | Default
 `--paper-tree-selected-color`                 | Text and icon color for selected node       | `inherit`
 `--paper-tree-toggle-theme`                   | Change theme for node +/- toggle            |
 `--paper-tree-icon-theme`                     | Change theme for node icon                  |
+`--paper-tree-icon-theme`                     | Change theme for node icon                  |
 
 @demo
 -->
 
 <link rel="import" href="../iron-icons/iron-icons.html">
+<link rel="import" href="../coronita-icons/coronita-icons.html">
 
 <dom-module id="paper-tree-node">
 
@@ -51,6 +53,7 @@ Custom property | Description | Default
         .node-row {
             padding-left: 4px;
             padding-right: 4px;
+            @apply(--paper-tree-css-node)
         }
 
         .node-preicon.collapsed,
@@ -72,7 +75,10 @@ Custom property | Description | Default
         }
 
         .node-preicon.expanded:before {
+            /*
             content: '\2212';
+            */
+            content: '';
         }
 
         .node-preicon, .node-name {
@@ -100,11 +106,65 @@ Custom property | Description | Default
 
         li {
             list-style-type: none;
+            margin-top: 1em;
+            /*border: 1px solid red ;*/
         }
-
+        .status-icon {
+            margin-right: 5em;
+            text-align: right;
+            float: right;
+        }
         [hidden] {
             display: none;
         }
+        .fadeIn{
+            animation-name: fadeIn;
+            -webkit-animation-name: fadeIn;
+            animation-duration: 1.5s;
+            -webkit-animation-duration: 1.5s;
+            animation-timing-function: ease-in-out;
+            -webkit-animation-timing-function: ease-in-out;
+            visibility: visible !important;
+        }
+        hidden {
+            visibility: hidden;
+        }
+        @keyframes fadeIn {
+          	0% {
+          		transform: scale(0);
+          		opacity: 0.0;
+          	}
+          	60% {
+          		transform: scale(1.0);
+          	}
+          	80% {
+          		transform: scale(0.9);
+          		opacity: 1;
+          	}
+          	100% {
+          		transform: scale(1);
+          		opacity: 1;
+          	}
+          }
+
+        @-webkit-keyframes fadeIn {
+        	0% {
+        		-webkit-transform: scale(0);
+        		opacity: 0.0;
+        	}
+        	60% {
+        		-webkit-transform: scale(1.0);
+        	}
+        	80% {
+        		-webkit-transform: scale(0.9);
+        		opacity: 1;
+        	}
+        	100% {
+        		-webkit-transform: scale(1);
+        		opacity: 1;
+        	}
+        }
+
     </style>
 
     <template>
@@ -112,7 +172,11 @@ Custom property | Description | Default
             <div class="node-row">
                 <span class$="{{_computeClass(data.*)}}" on-click="toggleChildren"></span>
                 <iron-icon class="node-icon" icon$="{{_computeIcon(data.icon)}}" on-click="select"></iron-icon>
-                <span class="node-name" on-click="select">{{data.name}}</span>
+                <span class="node-name" on-click="select">{{data.name}}
+                    <template is="dom-if" if="{{ node_status_visible }}">
+                      <iron-icon class$="node-icon status-icon {{css_class}}" icon$="{{ node_status_icon }}"></iron-icon>
+                    </template>
+                </span>
                 <template is="dom-if" if="{{actions}}">
                     <paper-menu-button id="actions">
                         <paper-icon-button icon="more-vert" noink class="dropdown-trigger"></paper-icon-button>
@@ -128,7 +192,7 @@ Custom property | Description | Default
               <ul>
                   <template is="dom-repeat" items="{{data.children}}">
                       <li>
-                          <paper-tree-node data="{{item}}" actions="{{actions}}"></paper-tree-node>
+                          <paper-tree-node data="{{item}}" node_status="{{item.node_status}}" actions="{{actions}}"></paper-tree-node>
                       </li>
                   </template>
               </ul>
@@ -144,6 +208,21 @@ Custom property | Description | Default
 
         is: 'paper-tree-node',
 
+        _nodeStatusChanged: function  (newValue, oldValue){
+            this.node_status_visible = typeof(newValue) !== 'undefined'
+            if(typeof(newValue) !== 'undefined'){
+              if (newValue != oldValue){
+                this.css_class = "hidden";
+                setTimeout(() => {
+                    this.css_class = "fadeIn"
+                },1);
+              }
+              setTimeout( () => {
+                this.node_status_icon = "coronita:" + (newValue ? "correct" : "error")
+              })
+
+            }
+        },
         properties: {
 
             /**
@@ -154,6 +233,7 @@ Custom property | Description | Default
              * - `data.name`: string representing the node name.
              * - `data.icon`: string telling which icon to use (default to 'folder' icon).
              * - `data.open`: boolean telling whether the node is expanded or not.
+             * - `data.node_css`: CSS that applies to this node.
              * - `data.children` array containing the children of the node.
              */
             data: {
@@ -161,6 +241,22 @@ Custom property | Description | Default
                 value: function() {
                     return null;
                 }
+            },
+            css_class: {
+                type: String,
+                value: "fadeIn"
+            },
+            node_status_visible: {
+                type: Boolean,
+                value: false
+            },
+
+            /**
+            * Check that we use to  validate that the node validation passed.
+            */
+            node_status: {
+                type: Boolean,
+                observer: "_nodeStatusChanged"
             },
 
             /**
